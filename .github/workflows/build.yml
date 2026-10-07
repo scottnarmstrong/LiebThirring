@@ -1,0 +1,110 @@
+name: Build and verify
+
+"on":
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  LANDRUN_REV: "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4"
+  NANODA_REV: "68d5ca9db226849b41a6fff59d796ff19d0a8840"
+  SCHEMA_REV: "99c678e569c7c4c0772db297c5ddd5e4c9b6322e"
+
+jobs:
+  build:
+    name: Build and verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Free runner disk space
+        run: |
+          set -Eeuo pipefail
+          # Only remove preinstalled, unused SDKs on disposable hosted runners.
+          if [[ "${RUNNER_ENVIRONMENT:-}" == github-hosted ]]; then
+            sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+            sudo docker image prune --all --force > /dev/null || true
+          fi
+          df -h .
+          available_kib="$(df -Pk . | awk 'NR==2 {print $4}')"
+          test "$available_kib" -ge 20971520
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: false
+
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+
+      - name: Restore project artifacts
+        id: project-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .lake/build
+          key: lieb-thirring-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            lieb-thirring-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      - name: Build
+        run: |
+          set -o pipefail
+          lake build 2>&1 | tee library-build.log
+          if grep -E "declaration uses 'sorry'" library-build.log; then
+            echo "The library build reported a sorry."
+            exit 1
+          fi
+
+      - name: Check axiom dependencies of the main theorems
+        run: python3 -I .github/scripts/check_axioms.py
+
+      - name: Check Lean modules
+        run: python3 -I scripts/check_lean_modules.py --root .
+
+      - name: Set up Python metadata validation
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate metadata and local Palomar requirements
+        run: |
+          python3 -m pip install 'PyYAML==6.0.2' 'jsonschema==4.23.0'
+          schema_path="$RUNNER_TEMP/formalization.schema.json"
+          curl --fail --location --retry 3 \
+            "https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/$SCHEMA_REV/schema/v0.4.schema.json" \
+            --output "$schema_path"
+          printf '%s  %s\n' '25ff6b25ca4511635aff4443cf20480c15e59dddf19591c730950b442ea54fce' "$schema_path" | sha256sum --check
+          python3 -I scripts/check_palomar.py --root . --comparator comparator.json \
+            --schema "$schema_path" --minimum-toolchain v4.35.0-rc2
+
+      - name: Save project artifacts
+        if: always() && steps.project-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .lake/build
+          key: lieb-thirring-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: library-build.log
+          if-no-files-found: ignore

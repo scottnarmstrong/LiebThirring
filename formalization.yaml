@@ -1,0 +1,371 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Stability of Matter in Lean: Lieb–Thirring, Ionization, the Thermodynamic Limit and Thomas–Fermi Theory"
+  description: >-
+    A Lean 4 and Mathlib formalization of the stability of non-relativistic
+    Coulomb matter in three dimensions. For normalized antisymmetric L2
+    electron states with q >= 1 spin states and static nuclei with charges
+    between zero and Z, it proves a lower energy bound -C(q,Z)(N+M),
+    uniformly in particle counts and nuclear positions. The main estimate
+    is an additive inequality between nonnegative extended energies, valid
+    even for infinite kinetic energy and nuclear collisions. A real
+    quadratic-form theorem proves Coulomb finiteness and the lower bound
+    for states with finite kinetic energy and distinct nuclear positions.
+    The library also proves the kinetic Lieb-Thirring inequality with
+    Rumin's explicit coefficient (9/35)(6 pi^2)^(2/3) q^(-2/3), Baxter's
+    electrostatic inequality with its positive nearest-other-nucleus
+    correction, and equality of the Fourier kinetic form with the classical
+    Dirichlet integral on spin-valued Schwartz functions. The kinetic
+    normalization is -Delta. The proof combines Pauli projections and
+    Rumin's layer cake, a Voronoi boundary-measure proof of Baxter's
+    inequality, nearest-nucleus screening, and Hardy's inequality.
+    Three extensions prove the atomic bound N < 2Z+1 for weak ground
+    states and strict binding, the unique continuous convex canonical
+    zero-temperature energy density of neutral matter with finite-mass
+    bosonic nuclei in Dirichlet balls, and the molecular Thomas-Fermi
+    large-charge limit for arbitrary fixed spin and every fixed TF
+    mass nu>0. Thomas-Fermi theory also has a unique relaxed minimizer,
+    mass saturation at the total nuclear charge, and exact-mass
+    attainment precisely up to neutrality.
+  authors: ["Scott Armstrong", "Amélie Loher"]
+  responsible_maintainers: ["Scott Armstrong", "Amélie Loher"]
+  affiliations:
+    - "Scott Armstrong: CNRS and Laboratoire Jacques-Louis Lions, Sorbonne Université; Courant Institute School of Mathematics, Computing, and Data Science, New York University"
+    - "Amélie Loher: All Souls College, University of Oxford"
+  license: "Apache-2.0"
+
+classification:
+  arxiv: ["math-ph", "math.AP"]
+  msc2020: ["81V70", "81Q10", "35Q40"]
+
+sources:
+  - title: "The Lieb-Thirring inequalities: Recent results and open problems"
+    authors: ["Rupert L. Frank"]
+    type: "paper"
+    id: "arxiv:2007.09326"
+    url: "https://arxiv.org/abs/2007.09326v1"
+    location: "Corollary 6, Theorem 7, Lemma 8"
+    relationship: "adapts"
+    note: >-
+      Solovej's stability proof, with kinetic Lieb-Thirring and Baxter
+      screening, is adapted to spin multiplicity, the explicit Rumin
+      coefficient and nonnegative extended energies. The bound covers
+      bounded unequal nuclear charges. The full preprint was obtained.
+  - title: "Methods of Modern Mathematical Physics: Uncertainty and Exclusion Principles in Quantum Mechanics"
+    authors: ["Douglas Lundholm"]
+    type: "book"
+    id: "arxiv:1805.03063"
+    url: "https://www.math.lmu.de/~lundholm/methmmp.pdf"
+    location: "2019 lecture notes: Theorem 6.1, Corollary 6.8, Theorem 7.2, Theorem 7.6"
+    relationship: "adapts"
+    note: >-
+      The full author-posted notes, revised July 27, 2019, were obtained;
+      this is the version used for numbering, rather than the related
+      arXiv version. The kinetic and spin bounds, Voronoi boundary-measure
+      proof of Baxter, and Solovej stability assembly are adapted. The
+      kinetic normalization here is -Delta; the stability theorem allows
+      bounded unequal charges and zero particle counts. The extended
+      theorem includes collisions; the real-form theorem assumes distinct
+      nuclei and finite kinetic energy. The explicit stability constant
+      is stated in README.md, without claiming the decimal constant of
+      Theorem 7.6 or its mass-dependent normalization.
+  - title: "Balanced distribution-energy inequalities and related entropy bounds"
+    authors: ["Michel Rumin"]
+    type: "paper"
+    id: "doi:10.1215/00127094-1444305"
+    url: "https://arxiv.org/abs/1008.1674v1"
+    location: "Sections 3.1-3.3; Duke Mathematical Journal 160 (2011), 567-597"
+    relationship: "adapts"
+    note: >-
+      The full 2010 preprint was obtained. Its distribution-energy
+      argument is specialized to the direct three-dimensional N-body
+      kinetic estimate with Pauli rank-one projections. The general
+      abstract distribution-energy and entropy theorems are outside scope.
+  - title: "Bound for the kinetic energy of fermions which proves the stability of matter"
+    authors: ["Elliott H. Lieb", "Walter E. Thirring"]
+    type: "paper"
+    id: "doi:10.1103/PhysRevLett.35.687"
+    url: "https://doi.org/10.1103/PhysRevLett.35.687"
+    location: "Physical Review Letters 35 (1975), 687-689; erratum 35, 1116"
+    relationship: "background"
+    note: >-
+      Original kinetic inequality and stability reference; the full
+      article and erratum (doi:10.1103/PhysRevLett.35.1116) were supplied.
+      The proof follows the modern sources above with the explicit
+      Rumin coefficient, without certifying the original constant.
+  - title: "Inequalities for the moments of the eigenvalues of the Schrödinger Hamiltonian and their relation to Sobolev inequalities"
+    authors: ["Elliott H. Lieb", "Walter E. Thirring"]
+    type: "paper"
+    id: "doi:10.1515/9781400868940-014"
+    url: "https://doi.org/10.1515/9781400868940-014"
+    location: "Studies in Mathematical Physics: Essays in Honor of Valentine Bargmann (1976), 269-303"
+    relationship: "background"
+    note: >-
+      Historical eigenvalue-moment reference; the full chapter was
+      supplied. The general eigenvalue-moment family is outside scope.
+  - title: "Inequalities for potentials of particle systems"
+    authors: ["J. R. Baxter"]
+    type: "paper"
+    id: "doi:10.1215/ijm/1256047480"
+    url: "https://doi.org/10.1215/ijm/1256047480"
+    location: "Illinois Journal of Mathematics 24 (1980), 645-652"
+    relationship: "background"
+    note: >-
+      Original electrostatic reference; the full article was supplied.
+      The proof adapts the Voronoi boundary-measure argument in
+      Lundholm's Theorem 7.2.
+  - title: "Bound on the maximum negative ionization of atoms and molecules"
+    authors: ["Elliott H. Lieb"]
+    type: "paper"
+    id: "doi:10.1103/PhysRevA.29.3018"
+    url: "https://doi.org/10.1103/PhysRevA.29.3018"
+    location: "Physical Review A 29 (1984), 3018-3028; Theorem 1, (2.9), (2.11), (4.1)-(4.5)"
+    relationship: "adapts"
+    note: >-
+      Atomic unit-charge specialization, with real positive nuclear
+      charge, arbitrary positive spin multiplicity, and -Delta kinetic
+      normalization. The bound is proved for normalized weak
+      form-domain ground states and for strict EReal binding against
+      removal of one electron. Localization and compactness prove the
+      binding-to-ground-state implication. The full paper was supplied.
+  - title: "The constitution of matter: Existence of thermodynamics for systems composed of electrons and nuclei"
+    authors: ["Elliott H. Lieb", "Joel L. Lebowitz"]
+    type: "paper"
+    id: "doi:10.1016/0001-8708(72)90023-0"
+    url: "https://doi.org/10.1016/0001-8708(72)90023-0"
+    location: "Advances in Mathematics 9 (1972), 316-398; Theorems 3.1-3.2, 4.6, 5.1; energy-density context in Theorem 8.1"
+    relationship: "adapts"
+    note: >-
+      Neutral screening, finite packing and renewal arguments are
+      adapted to canonical zero-temperature variational energies.
+      Electrons have arbitrary positive finite spin; nuclei are
+      spinless bosons of one positive integer charge and finite
+      positive mass. The limit covers every neutral sequence in
+      Dirichlet balls and every nonnegative nuclear density, including
+      zero. It proves uniqueness, continuity and convexity of the
+      energy density. Finite-temperature, entropy-dependent and
+      general-domain results are outside scope. The full paper was supplied.
+  - title: "The Thomas-Fermi theory of atoms, molecules and solids"
+    authors: ["Elliott H. Lieb", "Barry Simon"]
+    type: "paper"
+    id: "doi:10.1016/0001-8708(77)90108-6"
+    url: "https://doi.org/10.1016/0001-8708(77)90108-6"
+    location: "Advances in Mathematics 23 (1977), 22-116; Theorems II.14, II.17-II.20, II.32 and III.1, equation (45)"
+    relationship: "adapts"
+    note: >-
+      Molecular electronic and total energy limits are formulated for
+      arbitrary fixed positive spin, -Delta kinetic energy, positive
+      base charges at distinct positions, and every fixed TF mass nu>0.
+      The original kinetic units are converted to the sharp coefficient (3/5)(6 pi^2/q)^(2/3). Cube spectral bounds and
+      Slater trials prove the limit without a quantum ground-state
+      or TF minimizer premise. Relaxed TF minimization, neutrality and
+      exact-mass attainment are also proved; quantitative convexity
+      gives a strong-Cauchy existence proof. The full paper was obtained.
+  - title: "Thomas-Fermi and related theories of atoms and molecules"
+    authors: ["Elliott H. Lieb"]
+    type: "paper"
+    id: "doi:10.1103/RevModPhys.53.603"
+    url: "https://doi.org/10.1103/RevModPhys.53.603"
+    location: "Reviews of Modern Physics 53 (1981), 603-641; Theorems 2.4-2.5, 3.18 and 5.1"
+    relationship: "adapts"
+    note: >-
+      Source for the unique relaxed minimizer, the neutral saturation
+      threshold and the distinction between infimum and exact-mass
+      attainment, and a corroborating account of the molecular limit.
+      The formalization uses the cube and Slater proof of the energy
+      limit rather than the review's coherent-state alternative.
+      The full searchable review was supplied.
+  - title: "Erratum: Thomas-Fermi and related theories of atoms and molecules"
+    authors: ["Elliott H. Lieb"]
+    type: "paper"
+    id: "doi:10.1103/RevModPhys.54.311"
+    url: "https://doi.org/10.1103/RevModPhys.54.311"
+    location: "Reviews of Modern Physics 54 (1982), 311"
+    relationship: "background"
+    note: "Correction to the cited review; the full erratum was supplied."
+
+automation:
+  methods:
+    - method: "manual"
+      prompting_notes: >-
+        The authors chose the scope and proof routes, including the
+        approach to Baxter's inequality, and approved every exact Lean
+        definition and theorem statement before proof work, for the
+        stability results and all three extensions.
+    - method: "agent"
+      models: ["Claude Opus 5.5"]
+      framework: "Claude Code"
+      tool_setup: "Orchestration of the formalization."
+    - method: "agent"
+      models: ["GPT-6.1-Sol (high reasoning)"]
+      framework: "OpenAI Codex CLI"
+      tool_setup: "Agents wrote proof plans, Lean proofs and audits."
+    - method: "agent"
+      models: ["Sonnet"]
+      framework: "Claude Code"
+      tool_setup: "Subagents reviewed the Lean statements against the sources and checked proof dependency graphs."
+  notes: >-
+    The factual production account is in README.md, under How this
+    formalization was made. The redacted session transcript is in
+    transcript/. Correctness of proofs rests on Lean's kernel and the
+    comparator/NanoDa check, rather than human line-by-line review.
+
+review:
+  status: "agent-reviewed"
+  notes: >-
+    GPT-6.1-Sol and Sonnet performed audits. The authors approved
+    every exact Lean definition and theorem statement before proof work.
+    This does not claim human line-by-line proof review or completed
+    Palomar review. Build, stability and extension axiom reports, and
+    nine-result comparator commands are documented in README.md.
+
+status:
+  scope: >-
+    Five stability results: extended stability for all normalized
+    antisymmetric L2 states; real quadratic-form stability and Coulomb
+    finiteness with finite kinetic energy and distinct nuclei; kinetic
+    Lieb-Thirring in dimension three with spin; Baxter with equal charges
+    and the nearest-other-nucleus correction; and the Schwartz kinetic
+    identity. Extensions prove both atomic ionization bounds, the unique
+    continuous convex neutral zero-temperature energy density for all
+    nuclear densities in Dirichlet balls with finite-mass bosonic
+    nuclei, both molecular TF energy limits for every fixed TF mass
+    nu>0, and the unique relaxed TF minimizer and neutrality
+    saturation/attainment theorem. The comparator selects the first
+    four stability results and five extension results; the Schwartz
+    identity and two minimizer theorems have build and axiom checks.
+    The comparator certifies LiebThirringAudit.* copies of the listed
+    LiebThirring.* theorems, proved from those library results by the Solution.
+    Fixed-nucleus results and the quantum nuclear thermodynamic model
+    use their stated distinct conventions. Magnetic fields, relativistic
+    kinetics, general eigenvalue moments, finite-temperature limits and
+    limits on arbitrary domain shapes are outside scope.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+  main_results:
+    - declaration: "LiebThirring.stability_of_matter"
+      file: "LiebThirring/Theorems/StabilityOfMatter.lean"
+      sorry_count: 0
+      comparator_config: "comparator.json"
+    - declaration: "LiebThirring.stability_of_matter_real"
+      file: "LiebThirring/Theorems/StabilityOfMatterReal.lean"
+      sorry_count: 0
+      comparator_config: "comparator.json"
+    - declaration: "LiebThirring.kinetic_lieb_thirring"
+      file: "LiebThirring/Theorems/KineticLiebThirring.lean"
+      sorry_count: 0
+      comparator_config: "comparator.json"
+    - declaration: "LiebThirring.baxter"
+      file: "LiebThirring/Theorems/Baxter.lean"
+      sorry_count: 0
+      comparator_config: "comparator.json"
+    - declaration: "LiebThirring.kineticEnergy_schwartz"
+      file: "LiebThirring/Theorems/KineticEnergySchwartz.lean"
+      sorry_count: 0
+    - declaration: "LiebThirring.electron_count_lt_of_atomic_weak_ground_state"
+      file: "LiebThirring/Ionization/WeakGroundStateBound.lean"
+      sorry_count: 0
+      comparator_config: "comparator.json"
+    - declaration: "LiebThirring.electron_count_lt_of_atomic_binding"
+      file: "LiebThirring/Ionization/BindingBound.lean"
+      sorry_count: 0
+      comparator_config: "comparator.json"
+    - declaration: "LiebThirring.exists_unique_thermodynamic_energy_density"
+      file: "LiebThirring/Thermodynamic/ThermodynamicLimit.lean"
+      sorry_count: 0
+      comparator_config: "comparator.json"
+    - declaration: "LiebThirring.tendsto_electronicGroundStateEnergy_tf"
+      file: "LiebThirring/ThomasFermi/MolecularLimit.lean"
+      sorry_count: 0
+      comparator_config: "comparator.json"
+    - declaration: "LiebThirring.tendsto_groundStateEnergy_tf"
+      file: "LiebThirring/ThomasFermi/TotalLimit.lean"
+      sorry_count: 0
+      comparator_config: "comparator.json"
+    - declaration: "LiebThirring.exists_unique_tfRelaxedMinimizer"
+      file: "LiebThirring/ThomasFermi/RelaxedMinimizer.lean"
+      sorry_count: 0
+    - declaration: "LiebThirring.tfEnergy_saturation_and_attainment"
+      file: "LiebThirring/ThomasFermi/Saturation.lean"
+      sorry_count: 0
+
+fidelity:
+  divergences: >-
+    The kinetic operator is -Delta with Fourier phase exp(-2 pi i x.xi).
+    The explicit coefficient is (9/35)(6 pi^2)^(2/3) q^(-2/3), with no
+    optimality claim. Stability uses charges 0 <= z_k <= Z and a constant
+    chosen before N, M, charges, nuclear positions and state. Its main
+    formulation is additive in [0,infinity], avoiding subtraction of
+    infinities and allowing nuclear collisions. The real form requires
+    distinct nuclei and finite kinetic energy and proves all Coulomb
+    terms finite. Baxter's theorem has equal charges and includes its
+    Z^2/4 correction; unequal-charge screening is proved in the assembly.
+    Empty configurations are included. The Coulomb kernel at collision
+    is infinity, zero times infinity is zero, and an empty nearest-distance
+    infimum is infinity with inverse zero. README.md states every theorem
+    and these conventions in mathematical notation.
+    Atomic ionization specializes to one static nucleus of arbitrary
+    positive real charge; strict binding compares the EReal infima at N
+    and truncated-natural N-1, while weak ground states require
+    normalized form-domain attainment at a real energy. The thermodynamic
+    result uses exact neutrality N=zM, nuclear density M/volume, kinetic
+    coefficients 1 and 1/m, bosonic nuclei, and Dirichlet form closure;
+    convergence includes density zero. TF uses nonnegative a.e. L1 and
+    L^(5/3) classes, the half-weighted direct Coulomb energy and the
+    sharp -Delta coefficient (3/5)(6 pi^2/q)^(2/3). Its energy omits
+    nuclear repulsion; the total limit adds that constant on both sides.
+    The scale is alpha=N/nu, with charges alpha*z, positions
+    alpha^(-1/3)*R and energy alpha^(7/3). The total limit requires
+    distinct scaled positions at each index. Relaxed minimization
+    permits zero mass and coincident nuclei; saturation and exact-mass
+    attainment require positive charges and distinct positions. Exact
+    and relaxed infima are distinguished, and no minimizer is assumed
+    in either molecular quantum limit.
+
+alignment:
+  - source: "Frank, Theorem 7; Lundholm, Theorem 7.6"
+    lean: "LiebThirring.stability_of_matter"
+    note: "Solovej's proof with bounded unequal charges and nonnegative extended additive energies."
+  - source: "Frank, Theorem 7; Lundholm, Theorem 7.6"
+    lean: "LiebThirring.stability_of_matter_real"
+    note: "Real form with Coulomb finiteness from Hardy, finite kinetic energy and distinct nuclei."
+  - source: "Frank, Corollary 6; Lundholm, Theorem 6.1 and Corollary 6.8; Rumin, Sections 3.1-3.3"
+    lean: "LiebThirring.kinetic_lieb_thirring"
+    note: "Three-dimensional N-body spin version with explicit Rumin coefficient."
+  - source: "Lundholm, Theorem 7.2"
+    lean: "LiebThirring.baxter"
+    note: "Equal-charge electrostatic estimate with the positive nearest-other-nucleus correction."
+  - source: "Fourier differentiation and Plancherel identities"
+    lean: "LiebThirring.kineticEnergy_schwartz"
+    note: "Classical Dirichlet integral identification for spin-valued Schwartz functions."
+  - source: "Lieb (1984), Theorem 1, (2.9), (2.11), (4.1)-(4.5)"
+    lean: "LiebThirring.electron_count_lt_of_atomic_weak_ground_state"
+    note: "Atomic unit-charge bound N < 2Z+1 for normalized weak form-domain ground states, with real Z and arbitrary positive spin."
+  - source: "Lieb (1984), Theorem 1 and the strict-binding discussion after (2.9)"
+    lean: "LiebThirring.electron_count_lt_of_atomic_binding"
+    note: "Strict EReal removal binding produces a weak ground state by localization and compactness, then the same atomic bound."
+  - source: "Lieb-Lebowitz (1972), Theorems 3.1-3.2, 4.6, 5.1 and 8.1"
+    lean: "LiebThirring.exists_unique_thermodynamic_energy_density"
+    note: "Screening, packing and renewal adapted to the all-sequence neutral canonical ground-energy limit in Dirichlet balls, including density zero."
+  - source: "Lieb-Simon (1977), Theorem III.1, (45); Lieb (1981), Theorem 5.1"
+    lean: "LiebThirring.tendsto_electronicGroundStateEnergy_tf"
+    note: "Electronic molecular energy, fixed arbitrary positive spin and -Delta kinetic units, every fixed TF mass nu>0, no minimizer premise."
+  - source: "Lieb-Simon (1977), Theorem III.1, (45); Lieb (1981), Theorem 5.1"
+    lean: "LiebThirring.tendsto_groundStateEnergy_tf"
+    note: "Total energy adds nuclear repulsion on both sides; scaled nuclear positions are distinct at every sequence index."
+  - source: "Lieb-Simon (1977), Theorem II.14; Lieb (1981), Theorem 2.4"
+    lean: "LiebThirring.exists_unique_tfRelaxedMinimizer"
+    note: "Unique relaxed minimizer at every nonnegative mass cap; quantitative convexity gives a strong-Cauchy existence proof."
+  - source: "Lieb-Simon (1977), Theorems II.17-II.20 and II.32; Lieb (1981), Theorems 2.5 and 3.18"
+    lean: "LiebThirring.tfEnergy_saturation_and_attainment"
+    note: "Energy saturation at total nuclear charge, exact-mass attainment iff nu <= Z0, and relaxed minimizer mass min(nu,Z0)."
+
+acknowledgements: >-
+  Scott Armstrong was supported by the European Research Council (ERC) under the
+  European Union's Horizon Europe research and innovation programme, grant
+  agreement No. 101200828. Amélie Loher acknowledges support from the Fondation
+  Sciences Mathématiques de Paris. Built on Lean 4, Mathlib and Lake, with
+  leanprover/comparator and NanoDa for independent verification.

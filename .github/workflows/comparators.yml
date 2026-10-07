@@ -1,0 +1,115 @@
+name: Comparators
+
+"on":
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: comparators-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  LANDRUN_REV: "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4"
+  NANODA_REV: "68d5ca9db226849b41a6fff59d796ff19d0a8840"
+  SCHEMA_REV: "99c678e569c7c4c0772db297c5ddd5e4c9b6322e"
+
+jobs:
+  comparators:
+    name: Comparators
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Free runner disk space
+        run: |
+          set -Eeuo pipefail
+          # Only remove preinstalled, unused SDKs on disposable hosted runners.
+          if [[ "${RUNNER_ENVIRONMENT:-}" == github-hosted ]]; then
+            sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+            sudo docker image prune --all --force > /dev/null || true
+          fi
+          df -h .
+          available_kib="$(df -Pk . | awk 'NR==2 {print $4}')"
+          test "$available_kib" -ge 20971520
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: false
+
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+
+      - name: Restore project artifacts
+        id: project-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .lake/build
+          key: lieb-thirring-comparators-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            lieb-thirring-comparators-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+            lieb-thirring-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      - name: Build
+        run: |
+          set -o pipefail
+          lake build 2>&1 | tee library-build.log
+          if grep -E "declaration uses 'sorry'" library-build.log; then
+            echo "The library build reported a sorry."
+            exit 1
+          fi
+
+      - name: Set up Go for landrun
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache: false
+
+      - name: Build verification sandbox and independent kernel
+        run: |
+          mkdir -p "$RUNNER_TEMP/verification-tools/bin"
+          CGO_ENABLED=0 GOBIN="$RUNNER_TEMP/verification-tools/bin" \
+            go install "github.com/zouuup/landrun/cmd/landrun@$LANDRUN_REV"
+          git clone --filter=blob:none https://github.com/robsimmons/nanoda_lib \
+            "$RUNNER_TEMP/verification-tools/nanoda_lib"
+          git -C "$RUNNER_TEMP/verification-tools/nanoda_lib" checkout --detach "$NANODA_REV"
+          cargo build --release --locked \
+            --manifest-path "$RUNNER_TEMP/verification-tools/nanoda_lib/Cargo.toml"
+
+      - name: Comparator and NanoDa check
+        env:
+          LT_COMPARATOR_CACHE: ${{ runner.temp }}/verification-tools/comparator-cache
+          COMPARATOR_LANDRUN: ${{ runner.temp }}/verification-tools/bin/landrun
+          COMPARATOR_NANODA: ${{ runner.temp }}/verification-tools/nanoda_lib/target/release/nanoda_bin
+        run: |
+          set -o pipefail
+          scripts/verify_comparator.sh 2>&1 | tee comparator.log
+
+      - name: Save project artifacts
+        if: always() && steps.project-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .lake/build
+          key: lieb-thirring-comparators-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+
+      - name: Upload comparator log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: comparator-log
+          path: comparator.log
+          if-no-files-found: ignore

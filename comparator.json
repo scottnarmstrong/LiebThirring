@@ -1,0 +1,22 @@
+{
+  "challenge_module": "LiebThirringAudit.Challenge.StabilityOfMatter",
+  "solution_module": "LiebThirringAudit.Solution.StabilityOfMatter",
+  "theorem_names": [
+    "LiebThirringAudit.stability_of_matter",
+    "LiebThirringAudit.stability_of_matter_real",
+    "LiebThirringAudit.kinetic_lieb_thirring",
+    "LiebThirringAudit.baxter",
+    "LiebThirringAudit.electron_count_lt_of_atomic_binding",
+    "LiebThirringAudit.electron_count_lt_of_atomic_weak_ground_state",
+    "LiebThirringAudit.exists_unique_thermodynamic_energy_density",
+    "LiebThirringAudit.tendsto_electronicGroundStateEnergy_tf",
+    "LiebThirringAudit.tendsto_groundStateEnergy_tf"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "enable_nanoda": true
+}
